@@ -38,11 +38,11 @@
 
     .app {
       min-height: 100vh;
-      display: grid;
-      grid-template-columns: 320px minmax(0, 1fr);
+      display: block;
     }
 
     aside {
+      display: none;
       border-right: 1px solid var(--line);
       background: #f4f2ea;
       padding: 28px 22px;
@@ -122,8 +122,9 @@
     }
 
     main {
-      padding: 30px;
+      padding: 28px;
       overflow: hidden;
+      min-height: 100vh;
     }
 
     .topbar {
@@ -131,7 +132,8 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      margin-bottom: 22px;
+      max-width: 980px;
+      margin: 0 auto 18px;
     }
 
     .topbar h2 {
@@ -141,7 +143,7 @@
     }
 
     .actions {
-      display: flex;
+      display: none;
       gap: 10px;
       flex-wrap: wrap;
       justify-content: flex-end;
@@ -169,9 +171,10 @@
 
     .grid {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.82fr);
+      grid-template-columns: minmax(0, 980px);
       gap: 18px;
       align-items: start;
+      justify-content: center;
     }
 
     .panel {
@@ -301,6 +304,10 @@
       display: block;
     }
 
+    .profile-summary {
+      display: none;
+    }
+
     .tone {
       display: grid;
       gap: 12px;
@@ -308,7 +315,7 @@
 
     .chat-shell {
       display: grid;
-      grid-template-rows: minmax(420px, 58vh) auto;
+      grid-template-rows: minmax(520px, 66vh) auto;
       gap: 12px;
     }
 
@@ -495,7 +502,7 @@
 
     @media (max-width: 920px) {
       .app {
-        grid-template-columns: 1fr;
+        display: block;
       }
 
       aside {
@@ -515,7 +522,6 @@
 
       .topbar {
         align-items: flex-start;
-        flex-direction: column;
       }
 
       .actions {
@@ -589,8 +595,8 @@
     <main>
       <div class="topbar">
         <div>
-          <h2 id="sectionTitle">Identity</h2>
-          <p class="subtitle" id="sectionSubtitle">Define the AI version's role, purpose, and decision posture.</p>
+          <h2 id="sectionTitle">Hiltin.AI</h2>
+          <p class="subtitle" id="sectionSubtitle">Ask a question, pressure-test a decision, or think through a next move.</p>
         </div>
         <div class="actions">
           <button class="button" id="resetBtn" type="button">Reset</button>
@@ -601,7 +607,7 @@
 
       <div class="grid">
         <section class="panel">
-          <div class="segment active" id="identity">
+          <div class="segment" id="identity">
             <div class="panel-header">
               <h3>Core Identity</h3>
               <p>Set the foundation for the assistant's self-concept and scope.</p>
@@ -699,14 +705,14 @@
             </div>
           </div>
 
-          <div class="segment" id="chat">
+          <div class="segment active" id="chat">
             <div class="panel-header">
-              <h3>Talk With Hiltin.AI</h3>
-              <p>A local conversation surface for testing the AI twin profile.</p>
+              <h3>Hiltin.AI</h3>
+              <p>Your AI thinking partner for business, finance, entrepreneurship, and life decisions.</p>
             </div>
             <div class="panel-body">
               <div class="chat-tools">
-                <p class="mode-note">API mode uses OpenAI through your local server. Press Enter to send, Shift+Enter for a new line.</p>
+                <p class="mode-note">Press Enter to send, Shift+Enter for a new line.</p>
                 <div class="chat-actions">
                   <label class="voice-toggle">
                     <input id="autoSpeakToggle" type="checkbox">
@@ -728,7 +734,7 @@
           </div>
         </section>
 
-        <aside class="panel" aria-label="Profile summary">
+        <aside class="panel profile-summary" aria-label="Profile summary">
           <div class="panel-header">
             <h3>Profile Strength</h3>
             <p>Completeness estimate for the current AI twin model.</p>
@@ -837,8 +843,10 @@
     function setTab(tab) {
       document.querySelectorAll(".segment").forEach((el) => el.classList.toggle("active", el.id === tab));
       document.querySelectorAll(".nav-button").forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
-      document.getElementById("sectionTitle").textContent = tabs[tab][0];
-      document.getElementById("sectionSubtitle").textContent = tabs[tab][1];
+      document.getElementById("sectionTitle").textContent = tab === "chat" ? "Hiltin.AI" : tabs[tab][0];
+      document.getElementById("sectionSubtitle").textContent = tab === "chat"
+        ? "Ask a question, pressure-test a decision, or think through a next move."
+        : tabs[tab][1];
       if (tab === "prompt") {
         document.getElementById("promptOutput").focus();
       }
@@ -1203,6 +1211,7 @@ Note: this is the local demo brain. For full Hiltin.AI reasoning over your insta
     });
 
     bindFields();
+    setTab("chat");
     render();
   </script>
 </body>
