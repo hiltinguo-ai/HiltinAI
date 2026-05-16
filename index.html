@@ -136,6 +136,35 @@
       margin: 0 auto 18px;
     }
 
+    .creator-card {
+      display: grid;
+      justify-items: center;
+      gap: 7px;
+      text-align: center;
+      min-width: 138px;
+    }
+
+    .creator-card img {
+      width: 70px;
+      height: 70px;
+      border-radius: 999px;
+      object-fit: cover;
+      border: 2px solid #fff;
+      box-shadow: 0 6px 18px rgba(23, 33, 27, 0.16);
+    }
+
+    .creator-card a {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.25;
+      text-decoration: none;
+    }
+
+    .creator-card a:hover {
+      text-decoration: underline;
+    }
+
     .topbar h2 {
       font-size: 28px;
       margin-bottom: 5px;
@@ -524,6 +553,10 @@
         align-items: flex-start;
       }
 
+      .creator-card {
+        align-self: flex-end;
+      }
+
       .actions {
         justify-content: flex-start;
       }
@@ -564,6 +597,23 @@
         width: 100%;
         justify-content: center;
       }
+
+      .topbar {
+        gap: 12px;
+      }
+
+      .creator-card {
+        min-width: 104px;
+      }
+
+      .creator-card img {
+        width: 56px;
+        height: 56px;
+      }
+
+      .creator-card a {
+        font-size: 12px;
+      }
     }
   </style>
 </head>
@@ -597,6 +647,10 @@
         <div>
           <h2 id="sectionTitle">Hiltin.AI</h2>
           <p class="subtitle" id="sectionSubtitle">Ask a question, pressure-test a decision, or think through a next move.</p>
+        </div>
+        <div class="creator-card" aria-label="Hiltin Guo profile">
+          <img src="assets/headshot.jpg" alt="Hiltin Guo headshot">
+          <a href="https://x.com/Hil_666" target="_blank" rel="noopener">Interact with me on X @Hil_666</a>
         </div>
         <div class="actions">
           <button class="button" id="resetBtn" type="button">Reset</button>
