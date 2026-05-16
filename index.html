@@ -1,0 +1,1209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hiltin AI Twin</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17211b;
+      --muted: #5c665f;
+      --line: #d9ddd6;
+      --paper: #fbfaf6;
+      --panel: #ffffff;
+      --accent: #176b5b;
+      --accent-2: #c5523f;
+      --blue: #2f5d8c;
+      --gold: #b9892b;
+      --shadow: 0 12px 32px rgba(23, 33, 27, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    button,
+    textarea,
+    input {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+    }
+
+    aside {
+      border-right: 1px solid var(--line);
+      background: #f4f2ea;
+      padding: 28px 22px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow: auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: 21px;
+      line-height: 1.1;
+      margin-bottom: 3px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0;
+    }
+
+    nav {
+      display: grid;
+      gap: 8px;
+    }
+
+    .nav-button {
+      width: 100%;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 10px 12px;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .nav-button.active {
+      background: #fff;
+      border-color: var(--line);
+      box-shadow: 0 3px 10px rgba(23, 33, 27, 0.06);
+    }
+
+    .side-note {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    main {
+      padding: 30px;
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .topbar h2 {
+      font-size: 28px;
+      margin-bottom: 5px;
+      letter-spacing: 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .button {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      min-height: 40px;
+      border-radius: 8px;
+      padding: 9px 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(320px, 0.82fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 18px 18px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .panel-header h3 {
+      margin-bottom: 4px;
+      font-size: 17px;
+    }
+
+    .panel-header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .panel-body {
+      padding: 18px;
+    }
+
+    .field {
+      display: grid;
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+
+    label {
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 10px 11px;
+      line-height: 1.45;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(23, 107, 91, 0.12);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .pill {
+      border: 1px solid var(--line);
+      background: #faf9f4;
+      border-radius: 999px;
+      padding: 7px 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .score {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #faf9f4;
+    }
+
+    .score strong {
+      display: block;
+      font-size: 24px;
+      color: var(--accent);
+    }
+
+    .score span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #1f2a23;
+      background: #f7f6f0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 14px;
+      max-height: 620px;
+      overflow: auto;
+    }
+
+    .segment {
+      display: none;
+    }
+
+    .segment.active {
+      display: block;
+    }
+
+    .tone {
+      display: grid;
+      gap: 12px;
+    }
+
+    .chat-shell {
+      display: grid;
+      grid-template-rows: minmax(420px, 58vh) auto;
+      gap: 12px;
+    }
+
+    .chat-log {
+      border: 1px solid var(--line);
+      background: #f7f6f0;
+      border-radius: 8px;
+      padding: 14px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message {
+      max-width: 82%;
+      border-radius: 8px;
+      padding: 11px 12px;
+      line-height: 1.45;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .message small {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .message.user small {
+      color: rgba(255, 255, 255, 0.76);
+    }
+
+    .message.error {
+      border-color: rgba(197, 82, 63, 0.34);
+      background: #fff7f5;
+    }
+
+    .typing {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      min-height: 18px;
+    }
+
+    .typing span {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+      opacity: 0.35;
+      animation: pulse 1s infinite ease-in-out;
+    }
+
+    .typing span:nth-child(2) {
+      animation-delay: 120ms;
+    }
+
+    .typing span:nth-child(3) {
+      animation-delay: 240ms;
+    }
+
+    .chat-form {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 96px;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .chat-form textarea {
+      min-height: 54px;
+      max-height: 150px;
+    }
+
+    .chat-tools {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .chat-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .mode-note {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .ghost-button {
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      cursor: pointer;
+      padding: 6px 0;
+      white-space: nowrap;
+      font-weight: 650;
+    }
+
+    .voice-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .voice-toggle input {
+      width: auto;
+      accent-color: var(--accent);
+    }
+
+    .range-field {
+      display: grid;
+      grid-template-columns: 120px minmax(0, 1fr) 44px;
+      gap: 10px;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    input[type="range"] {
+      padding: 0;
+      accent-color: var(--accent);
+    }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: var(--ink);
+      color: #fff;
+      border-radius: 8px;
+      padding: 11px 13px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: 180ms ease;
+      pointer-events: none;
+      font-size: 13px;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes pulse {
+      0%,
+      80%,
+      100% {
+        opacity: 0.25;
+        transform: translateY(0);
+      }
+
+      40% {
+        opacity: 0.85;
+        transform: translateY(-2px);
+      }
+    }
+
+    @media (max-width: 920px) {
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: relative;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      nav {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .actions {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      main {
+        padding: 18px;
+      }
+
+      nav,
+      .score-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .range-field {
+        grid-template-columns: 1fr;
+      }
+
+      .chat-form {
+        grid-template-columns: 1fr;
+      }
+
+      .chat-tools {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .chat-actions {
+        justify-content: flex-start;
+      }
+
+      .message {
+        max-width: 100%;
+      }
+
+      .button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside>
+      <div class="brand">
+        <div class="mark">H</div>
+        <div>
+          <h1>Hiltin AI Twin</h1>
+          <p class="subtitle">CPA mind, MBA strategy, founder judgment</p>
+        </div>
+      </div>
+
+      <nav aria-label="Profile sections">
+        <button class="nav-button active" data-tab="identity">Identity</button>
+        <button class="nav-button" data-tab="expertise">Expertise</button>
+        <button class="nav-button" data-tab="philosophy">Philosophy</button>
+        <button class="nav-button" data-tab="voice">Voice</button>
+        <button class="nav-button" data-tab="chat">Chat</button>
+        <button class="nav-button" data-tab="prompt">System Prompt</button>
+      </nav>
+
+      <p class="side-note">
+        This local builder creates the core operating model for your AI version. Add real memories and writing samples later for higher fidelity.
+      </p>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <div>
+          <h2 id="sectionTitle">Identity</h2>
+          <p class="subtitle" id="sectionSubtitle">Define the AI version's role, purpose, and decision posture.</p>
+        </div>
+        <div class="actions">
+          <button class="button" id="resetBtn" type="button">Reset</button>
+          <button class="button" id="copyBtn" type="button">Copy Prompt</button>
+          <button class="button primary" id="downloadBtn" type="button">Export Profile</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <section class="panel">
+          <div class="segment active" id="identity">
+            <div class="panel-header">
+              <h3>Core Identity</h3>
+              <p>Set the foundation for the assistant's self-concept and scope.</p>
+            </div>
+            <div class="panel-body">
+              <div class="field">
+                <label for="name">AI twin name</label>
+                <input id="name" data-key="name">
+              </div>
+              <div class="field">
+                <label for="mission">Mission</label>
+                <textarea id="mission" data-key="mission"></textarea>
+              </div>
+              <div class="field">
+                <label for="decisionProcess">Default decision process</label>
+                <textarea id="decisionProcess" data-key="decisionProcess"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="segment" id="expertise">
+            <div class="panel-header">
+              <h3>Knowledge Stack</h3>
+              <p>Shape how the AI uses accounting, strategy, and entrepreneurship.</p>
+            </div>
+            <div class="panel-body">
+              <div class="field">
+                <label for="cpa">CPA knowledge</label>
+                <textarea id="cpa" data-key="cpa"></textarea>
+              </div>
+              <div class="field">
+                <label for="mba">MBA education</label>
+                <textarea id="mba" data-key="mba"></textarea>
+              </div>
+              <div class="field">
+                <label for="entrepreneurship">Serial entrepreneurship</label>
+                <textarea id="entrepreneurship" data-key="entrepreneurship"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="segment" id="philosophy">
+            <div class="panel-header">
+              <h3>Living Philosophies</h3>
+              <p>Keep the assistant grounded in your operating principles.</p>
+            </div>
+            <div class="panel-body">
+              <div class="pill-row" id="principlePills"></div>
+              <div class="field">
+                <label for="principles">Principles</label>
+                <textarea id="principles" data-key="principles"></textarea>
+              </div>
+              <div class="field">
+                <label for="redLines">Red lines</label>
+                <textarea id="redLines" data-key="redLines"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="segment" id="voice">
+            <div class="panel-header">
+              <h3>Voice and Judgment</h3>
+              <p>Calibrate how the AI sounds and how forcefully it challenges assumptions.</p>
+            </div>
+            <div class="panel-body tone">
+              <div class="range-field">
+                <label for="directness">Directness</label>
+                <input type="range" min="1" max="10" id="directness" data-key="directness">
+                <span id="directnessValue"></span>
+              </div>
+              <div class="range-field">
+                <label for="warmth">Warmth</label>
+                <input type="range" min="1" max="10" id="warmth" data-key="warmth">
+                <span id="warmthValue"></span>
+              </div>
+              <div class="range-field">
+                <label for="risk">Risk discipline</label>
+                <input type="range" min="1" max="10" id="risk" data-key="risk">
+                <span id="riskValue"></span>
+              </div>
+              <div class="field">
+                <label for="style">Communication style</label>
+                <textarea id="style" data-key="style"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="segment" id="prompt">
+            <div class="panel-header">
+              <h3>Generated System Prompt</h3>
+              <p>Use this as the instruction layer for a custom assistant or chatbot.</p>
+            </div>
+            <div class="panel-body">
+              <pre id="promptOutput"></pre>
+            </div>
+          </div>
+
+          <div class="segment" id="chat">
+            <div class="panel-header">
+              <h3>Talk With Hiltin.AI</h3>
+              <p>A local conversation surface for testing the AI twin profile.</p>
+            </div>
+            <div class="panel-body">
+              <div class="chat-tools">
+                <p class="mode-note">API mode uses OpenAI through your local server. Press Enter to send, Shift+Enter for a new line.</p>
+                <div class="chat-actions">
+                  <label class="voice-toggle">
+                    <input id="autoSpeakToggle" type="checkbox">
+                    Auto speak
+                  </label>
+                  <button class="ghost-button" id="speakLastBtn" type="button">Speak last reply</button>
+                  <button class="ghost-button" id="stopVoiceBtn" type="button">Stop voice</button>
+                  <button class="ghost-button" id="clearChatBtn" type="button">Clear chat</button>
+                </div>
+              </div>
+              <div class="chat-shell">
+                <div class="chat-log" id="chatLog" aria-live="polite"></div>
+                <form class="chat-form" id="chatForm">
+                  <textarea id="chatInput" placeholder="Ask Hiltin.AI about Airi, CPA judgment, founder decisions, or life philosophy..."></textarea>
+                  <button class="button primary" id="sendChatBtn" type="submit">Send</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="panel" aria-label="Profile summary">
+          <div class="panel-header">
+            <h3>Profile Strength</h3>
+            <p>Completeness estimate for the current AI twin model.</p>
+          </div>
+          <div class="panel-body">
+            <div class="score-grid">
+              <div class="score"><strong id="scoreIdentity">0</strong><span>Identity</span></div>
+              <div class="score"><strong id="scoreExpertise">0</strong><span>Expertise</span></div>
+              <div class="score"><strong id="scoreValues">0</strong><span>Values</span></div>
+              <div class="score"><strong id="scoreVoice">0</strong><span>Voice</span></div>
+            </div>
+          </div>
+          <div class="panel-header">
+            <h3>Operating Signature</h3>
+            <p>How this AI twin should naturally behave.</p>
+          </div>
+          <div class="panel-body">
+            <pre id="signature"></pre>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const defaults = {
+      name: "Guo AI Twin",
+      mission: "Act as Guo's thinking partner for business, finance, strategy, entrepreneurship, leadership, and life decisions. Provide grounded judgment that combines CPA-level financial discipline, MBA strategic thinking, founder experience, and durable personal philosophy.",
+      decisionProcess: "Define the real objective. Identify constraints across time, cash, people, risk, reputation, legal, tax, and operations. Separate facts from assumptions. Model downside before upside. Find the smallest useful test. Recommend the next action with owner, deadline, metric, and review point.",
+      cpa: "Use accounting rigor: financial statements, cash flow, working capital, revenue recognition, controls, tax awareness, audit mindset, compliance risk, margins, liabilities, and capital discipline. Separate accounting profit from economic reality.",
+      mba: "Use strategy and management judgment: market structure, customer segmentation, positioning, pricing, competitive advantage, operations, incentives, negotiation, leadership, and organizational design. Translate strategy into execution.",
+      entrepreneurship: "Think like a serial entrepreneur: test fast, protect cash runway, listen to customers, build distribution, watch unit economics, hire carefully, move decisively, and learn under uncertainty.",
+      principles: "Ownership, compounding, clarity, pragmatism, integrity, courage, learning, service, resilience, useful ambition.",
+      redLines: "Do not invent personal memories. Do not provide regulated professional advice as final authority. Do not chase vanity metrics over cash, customers, trust, and durable value. Do not hide risk to make an idea sound better.",
+      style: "Direct, calm, practical, strategic, financially literate, lightly challenging, and action-oriented. Prefer plain language over jargon. Start with the conclusion when possible.",
+      directness: "8",
+      warmth: "6",
+      risk: "9"
+    };
+
+    const tabs = {
+      identity: ["Identity", "Define the AI version's role, purpose, and decision posture."],
+      expertise: ["Expertise", "Shape how the AI uses accounting, strategy, and entrepreneurship."],
+      philosophy: ["Philosophy", "Keep the assistant grounded in your operating principles."],
+      voice: ["Voice", "Calibrate tone, challenge level, and judgment style."],
+      chat: ["Chat", "Talk with the local Hiltin.AI demo."],
+      prompt: ["System Prompt", "Copy or export the generated instruction layer."]
+    };
+
+    const state = loadState();
+    let chatMessages = loadChat();
+    let chatIsThinking = false;
+    let autoSpeak = localStorage.getItem("hiltinAiTwinAutoSpeak") === "true";
+    let currentAudio = null;
+    const toast = document.getElementById("toast");
+
+    function loadState() {
+      try {
+        return { ...defaults, ...JSON.parse(localStorage.getItem("hiltinAiTwin") || "{}") };
+      } catch {
+        return { ...defaults };
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem("hiltinAiTwin", JSON.stringify(state));
+    }
+
+    function loadChat() {
+      try {
+        const saved = JSON.parse(localStorage.getItem("hiltinAiTwinChat") || "[]");
+        return Array.isArray(saved) && saved.length ? saved : getWelcomeChat();
+      } catch {
+        return getWelcomeChat();
+      }
+    }
+
+    function getWelcomeChat() {
+      return [{
+        role: "assistant",
+        text: "I am Hiltin.AI. Ask me about Airi, founder-led sales, CPA judgment, MBA strategy, or life decisions. Give me the messy version; I will help make the next move clear."
+      }];
+    }
+
+    function saveChat() {
+      const cleanedMessages = chatMessages.slice(-40).map((message) => ({
+        ...message,
+        text: cleanConversationText(message.text).slice(0, 600)
+      }));
+      localStorage.setItem("hiltinAiTwinChat", JSON.stringify(cleanedMessages));
+    }
+
+    function bindFields() {
+      document.querySelectorAll("[data-key]").forEach((field) => {
+        field.value = state[field.dataset.key] || "";
+        field.addEventListener("input", () => {
+          state[field.dataset.key] = field.value;
+          saveState();
+          render();
+        });
+      });
+    }
+
+    function setTab(tab) {
+      document.querySelectorAll(".segment").forEach((el) => el.classList.toggle("active", el.id === tab));
+      document.querySelectorAll(".nav-button").forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
+      document.getElementById("sectionTitle").textContent = tabs[tab][0];
+      document.getElementById("sectionSubtitle").textContent = tabs[tab][1];
+      if (tab === "prompt") {
+        document.getElementById("promptOutput").focus();
+      }
+      if (tab === "chat") {
+        document.getElementById("chatInput").focus();
+      }
+    }
+
+    function generatePrompt() {
+      return `You are ${state.name}: an AI version of Guo with CPA knowledge, MBA education, serial entrepreneurship experience, and a disciplined life philosophy.
+
+Mission:
+${state.mission}
+
+CPA knowledge:
+${state.cpa}
+
+MBA education:
+${state.mba}
+
+Serial entrepreneurship:
+${state.entrepreneurship}
+
+Living philosophies:
+${state.principles}
+
+Communication style:
+${state.style}
+
+Decision process:
+${state.decisionProcess}
+
+Risk and integrity guardrails:
+${state.redLines}
+
+Calibration:
+- Directness: ${state.directness}/10
+- Warmth: ${state.warmth}/10
+- Risk discipline: ${state.risk}/10
+
+When responding, start with the practical conclusion when possible, separate facts from assumptions, name tradeoffs, challenge weak assumptions respectfully, and end with a concrete next action. For tax, legal, audit, compliance, investment, or other regulated matters, provide educational decision support and recommend review by the appropriate licensed professional. Never invent Guo's personal memories.`;
+    }
+
+    function isComplete(key) {
+      const value = String(state[key] || "").trim();
+      if (["directness", "warmth", "risk"].includes(key)) {
+        return Number(value) > 0;
+      }
+      if (key === "name") {
+        return value.length > 0;
+      }
+      return value.length > 20;
+    }
+
+    function score(keys) {
+      const completed = keys.filter(isComplete).length;
+      return Math.round((completed / keys.length) * 100);
+    }
+
+    function render() {
+      document.getElementById("promptOutput").textContent = generatePrompt();
+      document.getElementById("signature").textContent = [
+        "Financially disciplined before optimistic.",
+        "Strategic, but allergic to empty theory.",
+        "Founder-minded: test, sell, learn, iterate.",
+        "Direct enough to be useful, warm enough to be trusted.",
+        "Long-term reputation over short-term appearance."
+      ].join("\n");
+      document.getElementById("scoreIdentity").textContent = score(["name", "mission", "decisionProcess"]);
+      document.getElementById("scoreExpertise").textContent = score(["cpa", "mba", "entrepreneurship"]);
+      document.getElementById("scoreValues").textContent = score(["principles", "redLines"]);
+      document.getElementById("scoreVoice").textContent = score(["style", "directness", "warmth", "risk"]);
+      ["directness", "warmth", "risk"].forEach((key) => {
+        document.getElementById(`${key}Value`).textContent = state[key];
+      });
+
+      const pills = String(state.principles || "")
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+        .slice(0, 12);
+      document.getElementById("principlePills").innerHTML = pills.map((item) => `<span class="pill">${escapeHtml(item)}</span>`).join("");
+      renderChat();
+    }
+
+    function renderChat() {
+      const log = document.getElementById("chatLog");
+      if (!log) return;
+      const renderedMessages = chatMessages.map((message) => renderMessage(message)).join("");
+      const thinkingMessage = chatIsThinking
+        ? `<div class="message assistant"><small>Hiltin.AI</small><span class="typing" aria-label="Hiltin.AI is thinking"><span></span><span></span><span></span></span></div>`
+        : "";
+      log.innerHTML = renderedMessages + thinkingMessage;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function renderMessage(message) {
+      const label = message.role === "user" ? "You" : "Hiltin.AI";
+      const classes = ["message", message.role, message.error ? "error" : ""].filter(Boolean).join(" ");
+      return `<div class="${classes}"><small>${label}</small>${escapeHtml(cleanConversationText(message.text))}</div>`;
+    }
+
+    function generateLocalReply(input) {
+      const text = input.toLowerCase();
+      const isFinance = /cpa|account|finance|cash|margin|tax|revenue|cost|gaap|audit|control|working capital/.test(text);
+      const isFounder = /airi|startup|founder|customer|sales|pilot|restaurant|fundraising|vc|product/.test(text);
+      const isPhilosophy = /life|philosophy|meaning|pressure|family|value|buddh|dao|tao|leader|emotion/.test(text);
+
+      const lens = [
+        isFinance ? "CPA lens: separate accounting appearance from economic reality; check cash, margin, controls, and downside first." : "",
+        isFounder ? "Founder lens: prove customer pain, systematize onboarding, and let traction speak before scaling noise." : "",
+        isPhilosophy ? "Life lens: ambition is useful only when it preserves sincerity, responsibility, and respect for the people affected." : ""
+      ].filter(Boolean);
+
+      const chosenLens = lens.length ? lens.join("\n") : "My practical read: define the real objective, separate facts from assumptions, then choose the smallest useful test.";
+
+      return `${chosenLens}
+
+Recommendation: do not make the next move bigger than the evidence. Start with one concrete test, one owner, one metric, and one review date.
+
+What I would ask next:
+1. What decision are we actually making?
+2. What cash, customer, or reputation risk can hurt us?
+3. What evidence would change our mind within 7-14 days?
+
+Note: this is the local demo brain. For full Hiltin.AI reasoning over your installed skills and source files, connect this chat to an LLM backend using the generated system prompt.`;
+    }
+
+    async function generateApiReply(text) {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: text,
+          profilePrompt: generatePrompt(),
+          history: chatMessages.slice(-10)
+        })
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error || "API request failed");
+      }
+      return data.reply;
+    }
+
+    function cleanConversationText(value) {
+      return String(value || "")
+        .replace(/\*\*/g, "")
+        .replace(/^#{1,6}\s*/gm, "")
+        .replace(/[ \t]+$/gm, "")
+        .trim();
+    }
+
+    function splitIntoShortMessages(value, limit = 600, maxChunks = 5) {
+      const text = cleanConversationText(value);
+      if (!text) return [];
+      const chunks = [];
+      let remaining = text.replace(/\n+/g, "\n").trim();
+      while (remaining && chunks.length < maxChunks) {
+        if (remaining.length <= limit) {
+          chunks.push(remaining);
+          break;
+        }
+        let cut = remaining.lastIndexOf("\n", limit);
+        if (cut < 40) {
+          cut = remaining.lastIndexOf(" ", limit);
+        }
+        if (cut < 40) {
+          cut = limit;
+        }
+        chunks.push(remaining.slice(0, cut).trim());
+        remaining = remaining.slice(cut).trim();
+      }
+      if (remaining && chunks.length === maxChunks) {
+        chunks[maxChunks - 1] = `${chunks[maxChunks - 1].replace(/[.\s]+$/, "")}...`;
+      }
+      return chunks;
+    }
+
+    function pushAssistantChunks(text, extra = {}) {
+      const chunks = splitIntoShortMessages(text);
+      chunks.forEach((chunk) => {
+        chatMessages.push({ role: "assistant", text: chunk, ...extra });
+      });
+      return chunks;
+    }
+
+    function getLastAssistantText() {
+      const recent = [];
+      for (let index = chatMessages.length - 1; index >= 0; index -= 1) {
+        const message = chatMessages[index];
+        if (message.role === "assistant" && !message.error) {
+          recent.unshift(message.text);
+          continue;
+        }
+        if (recent.length) break;
+      }
+      return recent.join(" ");
+    }
+
+    async function speakText(text) {
+      const cleaned = cleanConversationText(text);
+      if (!cleaned) {
+        showToast("No reply to speak yet");
+        return;
+      }
+      stopVoice(false);
+
+      try {
+        const response = await fetch("/api/speech", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: cleaned })
+        });
+        if (response.ok) {
+          const blob = await response.blob();
+          currentAudio = new Audio(URL.createObjectURL(blob));
+          currentAudio.addEventListener("ended", () => {
+            URL.revokeObjectURL(currentAudio.src);
+            currentAudio = null;
+          }, { once: true });
+          await currentAudio.play();
+          return;
+        }
+      } catch {
+        // Fall back to browser speech below.
+      }
+
+      if (!("speechSynthesis" in window)) {
+        showToast("Voice output is not supported in this browser");
+        return;
+      }
+      const utterance = new SpeechSynthesisUtterance(cleaned);
+      utterance.rate = 0.96;
+      utterance.pitch = 1;
+      utterance.lang = /[\u3400-\u9FFF]/.test(cleaned) ? "zh-CN" : "en-US";
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function stopVoice(showMessage = true) {
+      if (currentAudio) {
+        currentAudio.pause();
+        URL.revokeObjectURL(currentAudio.src);
+        currentAudio = null;
+      }
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      if (showMessage) {
+        showToast("Voice stopped");
+      }
+    }
+
+    function escapeHtml(value) {
+      return value.replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#039;"
+      }[char]));
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    document.querySelectorAll(".nav-button").forEach((button) => {
+      button.addEventListener("click", () => setTab(button.dataset.tab));
+    });
+
+    document.getElementById("copyBtn").addEventListener("click", async () => {
+      await navigator.clipboard.writeText(generatePrompt());
+      showToast("Prompt copied");
+    });
+
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+      const blob = new Blob([generatePrompt()], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "guo-ai-twin-system-prompt.txt";
+      link.click();
+      URL.revokeObjectURL(url);
+      showToast("Profile exported");
+    });
+
+    document.getElementById("chatInput").addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        document.getElementById("chatForm").requestSubmit();
+      }
+    });
+
+    document.getElementById("clearChatBtn").addEventListener("click", () => {
+      chatMessages = getWelcomeChat();
+      chatIsThinking = false;
+      stopVoice(false);
+      saveChat();
+      renderChat();
+      showToast("Chat cleared");
+    });
+
+    document.getElementById("speakLastBtn").addEventListener("click", () => {
+      speakText(getLastAssistantText());
+    });
+
+    document.getElementById("stopVoiceBtn").addEventListener("click", () => {
+      stopVoice();
+    });
+
+    document.getElementById("autoSpeakToggle").checked = autoSpeak;
+    document.getElementById("autoSpeakToggle").addEventListener("change", (event) => {
+      autoSpeak = event.target.checked;
+      localStorage.setItem("hiltinAiTwinAutoSpeak", String(autoSpeak));
+      showToast(autoSpeak ? "Auto speak on" : "Auto speak off");
+    });
+
+    document.getElementById("chatForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (chatIsThinking) return;
+      const input = document.getElementById("chatInput");
+      const text = input.value.trim();
+      if (!text) return;
+      chatMessages.push({ role: "user", text });
+      input.value = "";
+      input.style.height = "";
+      chatIsThinking = true;
+      saveChat();
+      renderChat();
+      const sendButton = document.getElementById("sendChatBtn");
+      sendButton.disabled = true;
+      sendButton.textContent = "Thinking";
+      try {
+        const reply = await generateApiReply(text);
+        const spokenChunks = pushAssistantChunks(reply);
+        if (autoSpeak) {
+          speakText(spokenChunks.join(" "));
+        }
+      } catch (error) {
+        pushAssistantChunks(
+          `I could not reach the OpenAI-backed brain cleanly: ${error.message}\nTemporary local read:\n${generateLocalReply(text)}`,
+          { error: true }
+        );
+      } finally {
+        chatIsThinking = false;
+        sendButton.disabled = false;
+        sendButton.textContent = "Send";
+        saveChat();
+        renderChat();
+      }
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      Object.assign(state, defaults);
+      saveState();
+      bindFields();
+      render();
+      showToast("Profile reset");
+    });
+
+    bindFields();
+    render();
+  </script>
+</body>
+</html>
